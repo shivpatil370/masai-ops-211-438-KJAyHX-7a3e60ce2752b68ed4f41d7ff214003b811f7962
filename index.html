@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Country Finder</title>
+    <style>
+      /* Write all necessery css here  */
+      #all_countries{
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        gap:10px;
+      }
+      #all_countries>div{
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        padding: 10px;
+        margin: 0;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <select onChange="handleSort()" id="sort_population">
+      <option value="">Sort By Population</option>
+      <option value="asc">ASC</option>
+      <option value="desc">DESC</option>
+    </select>
+    <select onchange="gofilter()" id="filter_region">
+      <option value="">Filter By Region</option>
+      <option value="Africa">Africa</option>
+      <option value="Americas">Americas</option>
+      <option value="Asia">Asia</option>
+      <option value="Europe">Europe</option>
+      <option value="Oceania">Oceania</option>
+    </select>
+    <div id="all_countries">
+      <!-- Append Country Cards here  -->
+    </div>
+  </body>
+  <script>
+    // Write all necessery JS here
+    let bag=[];
+    let url=" https://restcountries.com/v3.1/all";
+    fetch(url)
+    .then((res)=>res.json())
+    .then((deta)=>{displayData(deta)
+         bag=[...deta]
+    })
+    .catch((rej)=>console.log(rej))
+
+    // sort by population
+    
+        function handleSort(){
+          let selected=document.querySelector("#sort_population").value;
+          
+
+          if(selected=="asc"){
+               bag.sort((a,b)=>a.population-b.population)
+          }
+          if(selected=="desc"){
+               bag.sort((a,b)=>b.population-a.population)
+          }
+          displayData(bag)
+        }
+
+        
+        //filter
+        function gofilter(){
+          let q=document.querySelector("#filter_region").value;
+          let filterdDeta=bag.filter(function(element){
+            return element.region==q;
+
+          })
+         
+          
+          displayData(filterdDeta);
+        }
+       
+    
+       function displayData(deta){
+        document.querySelector("#all_countries").innerText="";
+
+        deta.forEach((data)=>{
+
+          let div=document.createElement("div");
+
+          let Country_Name=document.createElement("h3");
+              Country_Name.innerText=data.name.common;
+
+          let image=document.createElement("img");
+              image.setAttribute("src",data.flags.png);
+
+          let Population=document.createElement("p");
+              Population.innerText=data.population;
+
+          let Region=document.createElement("p");
+              Region.innerText=data.region;
+
+          let Capital=document.createElement("p");
+              Capital.innerText=data.capital;
+
+              div.append(image,Country_Name,Population,Region,Capital);
+
+              document.querySelector("#all_countries").append(div)
+
+        })
+
+       }
+
+  </script>
+</html>
